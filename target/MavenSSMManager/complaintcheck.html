@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <script language="JavaScript" src="js/jquery-1.8.2.min.js"></script>
+    <script language="JavaScript" src="js/jquery.params.js"></script>
+    <script language="JavaScript">
+        var repairId=$.query.get("id");
+
+        // alert("id:"+repairId);
+        window.onload=reloadHTML;
+        function reloadHTML () {
+            $.ajax({
+                url:'/waiter/complaint/check',
+                data:JSON.stringify(repairId),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+                     //alert(JSON.stringify(data));
+                    getComplaintInfo(data);
+                }
+            );
+        }
+        function getComplaintInfo(complaintInfo){
+            var complaintInfoInHTML="<input type=\"hidden\" name=\"repairId\" value=\""+complaintInfo.id+"\"/> ";
+            complaintInfoInHTML +=
+                " <li><label>产品名</label><input name=\"productname\" id=\"productname\" readonly=\"readonly\"\n" +
+                "                                             value=\""+complaintInfo.productname+"\" type=\"text\" class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>投诉原因</label><input name=\"reason\" type=\"text\" readonly=\"readonly\" value=\""+complaintInfo.reason+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>客户姓名</label><input name=\"customername\" readonly=\"readonly\" type=\"text\"\n" +
+                "                                              value=\""+complaintInfo.customername+"\" class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>联系电话</label><input name=\"phone\" readonly=\"readonly\" type=\"text\" value=\""+complaintInfo.phone+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>客户地址</label><textarea name=\"address\" readonly=\"readonly\" cols=\"\" rows=\"\"\n" +
+                "                                                 class=\"textinput\">"+complaintInfo.address+"</textarea></li>";
+            if (complaintInfo.state==1){
+                complaintInfoInHTML+="<li><label>处理状态</label>\n" +
+                    "                            <input  type=\"text\" readonly=\"readonly\" value=\"已处理\" class=\"dfinput\"/>\n" +
+                    "                            <input type=\"hidden\" name=\"state\" value=\"1\"/>\n" +
+                    "                            <i></i>\n" +
+                    "                        </li>\n" +
+                    "                        <li><label>&nbsp;</label><input type=\"button\" onclick='returnList();'  class=\"btn\" value=\"确认\"/></li>";
+            }else{
+                complaintInfoInHTML+=" <li><label>处理状态</label>\n" +
+                    "                            <input name=\"state\" type=\"text\" readonly=\"readonly\" value=\"未处理\" class=\"dfinput\"/>\n" +
+                    "                            <input type=\"hidden\" name=\"state\" value=\"0\"/>\n" +
+                    "                            <i></i>\n" +
+                    "                        </li>\n" +
+                    "                        <li><label>&nbsp;</label><input type=\"button\" onclick='solveComplaint("+complaintInfo.id+");'  class=\"btn\" value=\"更改为已处理\"/>" +
+                    "                            <label>&nbsp;</label><input type=\"button\" onclick='returnList();'  class=\"btn\" value=\"确认\"/></li>";
+            }
+
+            $("#formInfo").html(complaintInfoInHTML);
+        }
+        function returnList() {
+            window.location.href="complaintlist.html";
+        }
+        function solveComplaint(id) {
+
+            //alert(JSON.stringify(id));
+            $.ajax({
+                url:'/waiter/complaint/solveComplaint',
+                data:JSON.stringify(id),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+                if (JSON.parse(data).status==1)
+                    alert("修改成功");
+                else {
+                    alert("修改失败");
+                }
+                reloadHTML();
+            });
+        }
+    </script>
+</head>
+
+
+<div class="place">
+
+    <div class="formbody">
+        <form id="complaintCheckForm">
+            <div class="formtitle"><span>投诉信息</span></div>
+
+            <ul class="forminfo" id="formInfo">
+
+            </ul>
+
+        </form>
+    </div>
+</div>
+</html>
+</html>

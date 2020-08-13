@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryh.repository.StockRepository">
+    <select id="findByType" parameterType="java.lang.Integer" resultType="Stock">
+        SELECT * FROM stock WHERE type = #{type}
+    </select>
+    <select id="findByQuantity" parameterType="java.lang.Integer" resultType="Stock">
+        SELECT * FROM stock WHERE type = #{param1} AND count &lt;= #{param2};
+    </select>
+    <select id="loadWorker" resultType="Fixlog">
+        SELECT * FROM fixlog WHERE toolname = '无'
+    </select>
+    <select id="findFixLogInfoByID" resultType="Fixlog" parameterType="java.lang.Integer">
+        SELECT * FROM fixlog WHERE id = #{id}
+    </select>
+    <update id="outOfStorage" parameterType="Fixlog" >
+        UPDATE fixlog SET toolname = #{toolname} , toolcount = #{toolcount}, partsname = #{partsname} , partscount = #{partscount}  WHERE id = #{id};
+        UPDATE stock SET count = count - #{partscount}  WHERE name = #{partsname} AND type = 1;
+        UPDATE stock SET count = count - 1  WHERE name = #{toolname} AND type = 0;
+    </update>
+    <select id="findBorrowed" resultType="Fixlog">
+        SELECT * FROM fixlog WHERE returntime IS NULL and toolname != '无'
+    </select>
+    <select id="countPutIn" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT COUNT(*) FROM stock WHERE name = #{name}
+    </select>
+    <insert id="insertPutIn" parameterType="Putin" >
+        INSERT INTO putin(
+        name,
+        count,
+        useful,
+        price,
+        time,
+        state,
+        type
+        ) VALUES (
+        #{name},
+        #{count},
+        #{use},
+        #{price},
+        #{time},
+        #{state},
+        #{type}
+        )
+    </insert>
+    <update id="addItemByName">
+        UPDATE stock SET count = count+#{param2}  WHERE name = #{param1} and type = #{param3}
+    </update>
+    <insert id="insertItem">
+        INSERT INTO stock(name,count,type) VALUES (#{param1},#{param2},#{param3});
+        INSERT INTO stock(name,count,type) VALUES (#{param1},0,#{param4});
+    </insert>
+    <update id="itemReturn" >
+        UPDATE fixlog SET oldparts = #{param5} , opcount = #{param3},returntime=#{param1}  WHERE id = #{param4};
+        UPDATE stock SET count = count+1  WHERE name = #{param6} and type = 0;
+        UPDATE stock SET count = count + #{param2}  WHERE name = #{param5} and type = 1;
+        UPDATE stock SET count = count + #{param3}  WHERE name = #{param5} and type = 2;
+    </update>
+</mapper>

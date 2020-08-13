@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript" src="/js/jquery.js"></script>
+    <script src="js/cloud.js" type="text/javascript"></script>
+    <script language="JavaScript" src="/js/jquery-1.8.2.min.js"></script>
+    <script src="js/jquery.params.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var thisPage=0;
+        $(document).ready(function(){
+            $(".click").click(function(){
+                $(".tip").fadeIn(200);
+            });
+
+            $(".tiptop a").click(function(){
+                $(".tip").fadeOut(200);
+            });
+
+            $(".sure").click(function(){
+                $(".tip").fadeOut(100);
+            });
+
+            $(".cancel").click(function(){
+                $(".tip").fadeOut(100);
+            });
+
+        });
+        window.onload=getList(0);
+        function getList(thisPage) {
+            //alert(JSON.stringify(thisPage));
+            var page={};
+
+            $.ajax({
+                url:'/waiter/complaint/list',
+                data:JSON.stringify(thisPage),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+                    //alert("data.list.childElementCount"+data.list.childElementCount);
+                    $("#totalSize").html(data.totalSize);
+                    $("#currentPage").html(data.currentPage);
+                    var pageSize=data.pageSize;
+                    if (data.totalPage==thisPage){
+                        pageSize=data.totalSize-((data.totalPage-1)*pageSize);
+                        //alert("因为是最后一页，所以：pageSize="+pageSize);
+                    }
+                    getDataList(data.list,pageSize);
+                    getPageInfo(data.currentPage,data.start,data.end, data.totalPage);
+                    //别忘了写笔记。。。。。
+                }
+            );
+
+        }
+        function getDataList(complaintList,pageSize) {
+            var complaintListInHTML="";
+            for (var i=0;i<pageSize;i++){
+                var state="";
+                if(complaintList[i].state==0){
+                    state="未处理";
+
+                }else{
+                    state="已处理";
+                }
+                complaintListInHTML=complaintListInHTML+"<tr>\n" +
+                    "                <td><input name=\""+complaintList[i].id+"\" type=\"checkbox\" value=\"\" /></td>\n" +
+                    "                <td>"+complaintList[i].productname+"</td>\n" +
+                    "                <td>"+complaintList[i].reason+"</td>\n" +
+                    "                <td>"+complaintList[i].customername+"</td>\n" +
+                    "                <td>"+complaintList[i].phone+"</td>\n" +
+                    "                <td>"+complaintList[i].address+"</td>\n" +
+                    "                <td>"+state+"</td>\n" +
+                    "                <td><a href=\"/complaintcheck.html?id="+complaintList[i].id+"\" class=\"tablelink\">查看</a></td>\n" +
+                    "            </tr>";
+            }
+            $("#complaintList").html(complaintListInHTML);
+        }
+        function getPageInfo(currentPage,start,end,totalPage) {
+            //alert("currentPage="+currentPage);
+            var pageInfoInHTML="";
+            if (currentPage==1){
+                pageInfoInHTML = pageInfoInHTML+ "<li class=\"paginItem\"><a><span class=\"pagepre\"></span></a></li>\n";
+            }else {
+
+                var previous=currentPage-1;
+                pageInfoInHTML=pageInfoInHTML+" <li class=\"paginItem\"><a onclick='getList("+previous+");'><span class=\"pagepre\"></span></a></li>";
+            }
+
+            for (var i=start;i<=end;i++){
+                var thisPage=i;
+                //alert("这是第几页："+thisPage);
+                pageInfoInHTML=pageInfoInHTML+"<li class=\"paginItem\"><a onclick='getList("+thisPage+");'>"+thisPage+"</a></li>";
+            }
+            if (currentPage==totalPage){
+                pageInfoInHTML=pageInfoInHTML+"<li class=\"paginItem\"><a><span class=\"pagenxt\"></span></a></li>";
+            }else{
+                var next=currentPage+1;
+                pageInfoInHTML=pageInfoInHTML+" <li class=\"paginItem\"><a onclick='getList("+next+");'><span class=\"pagenxt\"></span></a></li>";
+            }
+            $("#pageList").html(pageInfoInHTML);
+        }
+
+    </script>
+
+
+</head>
+
+
+<body>
+<div class="rightinfo">
+
+    <div class="formtitle">
+        <span>投诉记录表</span>
+
+    </div>
+
+
+    <table class="tablelist">
+        <thead>
+        <tr>
+            <th><input name="" type="checkbox" value="" checked="checked"/></th>
+            <th>产品名<i class="sort"><img src="images/px.gif" /></i></th>
+            <th>投诉原因</th>
+            <th>客户名</th>
+            <th>手机号</th>
+            <th>地址</th>
+            <th>处理进度</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="complaintList">
+
+
+
+
+        </tbody>
+    </table>
+
+
+    <div class="pagin">
+        <div class="message">共<i class="blue" id="totalSize"></i>条记录，当前显示第&nbsp;<i class="blue" id="currentPage"></i>页</div>
+        <ul class="paginList" id="pageList">
+
+
+        </ul>
+    </div>
+
+
+    <div class="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="images/ticon.png" /></span>
+            <div class="tipright">
+                <p>是否确认对信息的修改 ？</p>
+                <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            </div>
+        </div>
+
+        <div class="tipbtn">
+            <input name="" type="button"  class="sure" value="确定" />&nbsp;
+            <input name="" type="button"  class="cancel" value="取消" />
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+<script type="text/javascript">
+    $('.tablelist tbody tr:odd').addClass('odd');
+</script>
+</body>
+</html>

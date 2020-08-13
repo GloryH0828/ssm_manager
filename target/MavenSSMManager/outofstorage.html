@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.params.js"></script>
+    <script language="JavaScript">
+        var fixLogId = $.query.get("fixLogId");
+        var tools;
+        window.onload = function () {
+            $.ajax({
+                url: '/admin/stock/findFixLogInfoByID',
+                data: JSON.stringify(fixLogId),
+                type: 'POST',
+                dataType: 'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json"
+                },
+                processData: false,
+                cache: false
+            }).done(function (data) {
+                alert(JSON.stringify(data));
+                parts=data.parts;
+                reloadHTML(data.fixlog[0],parts, data.tools);
+            });
+        }
+        function reloadHTML(fixLog,parts,tools) {
+            var tableListInHTML="<input type='hidden' name='id' value='"+fixLog.id+"'/>" +
+                "                <input type='hidden' name='username' value='"+fixLog.username+"'/>" +
+                "                <li><label>产品名</label><input name=\"productname\" id=\"productname\" readonly=\"readonly\"\n" +
+                "                                             value=\""+fixLog.productname+"\" type=\"text\" class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>报修原因</label><input name=\"reason\" type=\"text\" readonly=\"readonly\" value=\""+fixLog.reason+" \"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>客户姓名</label><input name=\"customername\" readonly=\"readonly\" type=\"text\"\n" +
+                "                                              value=\""+fixLog.customername+"\" class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>联系电话</label><input name=\"phone\" readonly=\"readonly\" type=\"text\"\n" +
+                "                                              value=\""+fixLog.customerphone+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>客户地址</label><textarea name=\"address\" readonly=\"readonly\" cols=\"\" rows=\"\"\n" +
+                "                                                 class=\"textinput\">"+fixLog.customeraddress+"</textarea></li>";
+            tableListInHTML+=
+                "                 <li><label>工具列表</label>\n" +
+                "                    <select id=\"role1\" name=\"toolsName\" class=\"loginrole\">";
+
+            for (var i in tools){
+                tableListInHTML+="<option value=\""+tools[i].name+"\">"+tools[i].name+"</option>";
+            }
+            tableListInHTML+="</select>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>配件列表</label>\n" +
+                "                    <select id=\"role\" name=\"partsName\" class=\"loginrole\">";
+            for (var i in parts){
+                tableListInHTML+="<option value=\""+parts[i].name+"\">"+parts[i].name+"-剩余"+parts[i].count+"个</option>"
+            }
+            tableListInHTML+=" </select>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>出库数量</label>\n" +
+                "                    <input name=\"partsCount\" type=\"number\" min=\"0\"  class=\"dfinput\"/>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>&nbsp;</label><input type=\"button\" onclick='verifyAndSubmit()' class=\"btn\" value=\"确认\"/></li>";
+            $("#tableList").html(tableListInHTML);
+        }
+    </script>
+</head>
+<body>
+<div class="place">
+
+    <div class="formbody">
+        <form id="outOfFrom">
+            <div class="formtitle"><span>报修信息</span></div>
+            <ul class="forminfo" id="tableList">
+
+
+
+
+            </ul>
+
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    function verifyAndSubmit() {
+        var params = $("#outOfFrom").serializeArray();
+        var j = {};
+        for (var item in params) {
+            j[params[item].name] = params[item].value;
+        }
+        //alert(JSON.stringify(j));
+
+        for (var i in parts){
+
+            if (j.partsID == parts[i].id && j.partsCount > parts[i].count){
+                alert("该物品出库数量不得大于"+parts[i].count);
+                return;
+            }
+        }
+        $.ajax({
+            url: '/admin/stock/outOfStorage',
+            data: JSON.stringify(j),
+            type: 'POST',
+            dataType: 'json',
+            /*
+           声明参数位json类型，便于后台接收时可以识别
+            */
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            processData: false,
+            cache: false
+        }).done(function (data) {
+            alert("已完成物品分配！");
+            window.location.href="/workerlist.html"
+        });
+
+    }
+</script>
+</body>
+</html>

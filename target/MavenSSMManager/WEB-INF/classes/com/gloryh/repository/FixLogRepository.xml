@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryh.repository.FixLogRepository">
+   <select id="findFixingLogList" resultType="Fixlog">
+        SELECT * FROM fixlog WHERE returntime IS NOT NULL AND cost IS NULL
+   </select>
+    <update id="fixingLogToFixedLog" parameterType="Fixlog">
+        UPDATE fixlog SET bonus = #{fixlog.bonus},state = #{fixlog.state},reason = #{fixlog.reason},cost = #{fixlog.cost}  WHERE id = #{fixlog.id};
+        UPDATE complaint SET state = #{complaintState}  WHERE phone = #{fixlog.customerphone} and productname = #{fixlog.productname} and type = 0;
+        UPDATE worker SET state = 0  WHERE username = #{fixlog.username};
+    </update>
+    <select id="findFixedLogList" resultType="Fixlog">
+        SELECT * FROM fixlog WHERE returntime IS NOT NULL AND state != 2
+    </select>
+</mapper>

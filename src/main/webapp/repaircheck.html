@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <script language="JavaScript" src="js/jquery-1.8.2.min.js"></script>
+    <script language="JavaScript" src="js/jquery.params.js"></script>
+    <script language="JavaScript">
+        var repairId=$.query.get("id");
+
+       // alert("id:"+repairId);
+        window.onload=reloadHTML;
+            function reloadHTML () {
+            $.ajax({
+                url:'/waiter/repair/check',
+                data:JSON.stringify(repairId),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+               // alert(JSON.stringify(data));
+               getRepairInfo(data.repair,data.list);
+            }
+            );
+        }
+        function getRepairInfo(repairInfo,freeWorkerList){
+            var repairInfoInHTML="<input type=\"hidden\" name=\"repairId\" value=\""+repairInfo.id+"\"/> ";
+             repairInfoInHTML +=
+                " <li><label>产品名</label><input name=\"productname\" id=\"productname\" readonly=\"readonly\"\n" +
+                "                                             value=\""+repairInfo.productname+"\" type=\"text\" class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>报修原因</label><input name=\"reason\" type=\"text\" readonly=\"readonly\" value=\""+repairInfo.reason+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>客户姓名</label><input name=\"customername\" readonly=\"readonly\" type=\"text\"\n" +
+                "                                              value=\""+repairInfo.customername+"\" class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>联系电话</label><input name=\"phone\" readonly=\"readonly\" type=\"text\" value=\""+repairInfo.phone+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                " <li><label>客户地址</label><textarea name=\"address\" readonly=\"readonly\" cols=\"\" rows=\"\"\n" +
+                "                                                 class=\"textinput\">"+repairInfo.address+"</textarea></li>";
+             if (repairInfo.state==1){
+                 repairInfoInHTML+="<li><label>维修状态</label>\n" +
+                     "                            <input  type=\"text\" readonly=\"readonly\" value=\"已修好\" class=\"dfinput\"/>\n" +
+                     "                            <input type=\"hidden\" name=\"state\" value=\"1\"/>\n" +
+                     "                            <i></i>\n" +
+                     "                        </li>\n" +
+                     "                        <li><label>&nbsp;</label><input type=\"button\" onclick='returnList();'  class=\"btn\" value=\"确认\"/></li>";
+             }else if (repairInfo.state==2){
+                 repairInfoInHTML+="<li><label>维修状态</label>\n" +
+                     "                            <input  type=\"text\" readonly=\"readonly\" value=\"未修好\" class=\"dfinput\"/>\n" +
+                     "                            <input name=\"state\" type=\"hidden\" readonly=\"readonly\" value=\"2\" class=\"dfinput\"/>\n" +
+                     "                            <i></i>\n" +
+                     "                        </li>";
+                 repairInfoInHTML+=getFreeWorkerInfo(freeWorkerList);
+                 repairInfoInHTML+="<li><label>&nbsp;</label><input type=\"button\" class=\"btn\" onclick='dispatchWorkerAndRepairing();' value=\"确认派遣\"/></li>";
+             }else if (repairInfo.state==0) {
+                 repairInfoInHTML+="<li><label>维修状态</label>\n" +
+                     "                            <input  type=\"text\" readonly=\"readonly\" value=\"未维修\" class=\"dfinput\"/>\n" +
+                     "                            <input name=\"state\" type=\"hidden\" readonly=\"readonly\" value=\"0\" class=\"dfinput\"/>\n" +
+
+                     "                            <i></i>\n" +
+                     "                        </li>";
+                 repairInfoInHTML+=getFreeWorkerInfo(freeWorkerList);
+                 repairInfoInHTML+="<li><label>&nbsp;</label><input type=\"button\" class=\"btn\" onclick='dispatchWorkerAndRepairing();' value=\"确认派遣\"/></li>";
+             }else{
+                 repairInfoInHTML+=" <li><label>维修状态</label>\n" +
+                     "                            <input name=\"state\" type=\"text\" readonly=\"readonly\" value=\"维修中\" class=\"dfinput\"/>\n" +
+                     "\n" +
+                     "                            <i></i>\n" +
+                     "                        </li>\n" +
+                     "                        <li><label>&nbsp;</label><input type=\"button\" onclick='returnList();'  class=\"btn\" value=\"确认\"/></li>";
+             }
+
+             $("#formInfo").html(repairInfoInHTML);
+        }
+        function  getFreeWorkerInfo(freeWorkerInfo) {
+            //alert("size:"+workerListSize);
+            var workerList="";
+                workerList+=" <li><label>空闲工人</label>\n" +
+
+                "            <select id=\"role1\" name=\"workerUsername\" class=\"loginrole\">";
+            for (var key in freeWorkerInfo){
+                var workerUsername=freeWorkerInfo[key].username;
+                var workerName=freeWorkerInfo[key].name;
+                workerList+="<option value='"+workerUsername+"'>"+workerName+"</option>";
+            }
+            workerList+=" </select>\n" +
+                "         </li>";
+            return workerList;
+        }
+        function returnList() {
+            window.location.href="repairlist.html";
+        }
+        function dispatchWorkerAndRepairing() {
+            var params = $("#repairCheckForm").serializeArray();
+            var j = {};
+            for (var item in params) {
+                j[params[item].name] = params[item].value;
+            }
+            //alert(JSON.stringify(j));
+            $.ajax({
+                url:'/waiter/repair/dispatchWorkerAndRepairing',
+                data:JSON.stringify(j),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+                if (data.status==1)
+                    alert("派遣成功，已生成相应维修日志");
+                else {
+                    alert("派遣失败，遇到错误");
+                }
+                reloadHTML();
+            });
+         }
+</script>
+</head>
+
+
+<div class="place">
+
+    <div class="formbody">
+        <form id="repairCheckForm">
+            <div class="formtitle"><span>报修信息</span></div>
+
+            <ul class="forminfo" id="formInfo">
+
+            </ul>
+
+        </form>
+    </div>
+</div>
+</html>
+</html>

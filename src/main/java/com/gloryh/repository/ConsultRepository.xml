@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryh.repository.ConsultRepository">
+    <!--插入成功后返回主键-->
+    <insert id="addConsult" parameterType="Consult" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO consult(question,answer,customername,phone)
+        VALUE
+        (
+        #{question},
+        #{answer},
+        #{customername},
+        #{phone}
+        )
+    </insert>
+    <select id="countForConsult" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM  consult
+    </select>
+    <select id="consultList" resultType="java.util.Map">
+        SELECT * FROM consult  LIMIT  #{param1} , #{param2}
+    </select>
+</mapper>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css"/>
+    <script language="JavaScript" src="js/jquery.js"></script>
+    <script src="js/cloud.js" type="text/javascript"></script>
+    <script language="JavaScript" src="js/jquery.params.js"></script>
+    <script language="javascript">
+        var username=$.query.get("username");
+        var role=$.query.get("role");
+       // alert(username+"-"+role);
+        window.onload=function(){
+            if (role=="waiter" ){
+                $("#waiter").attr("style","");
+            }else if (role == "infoadmin" ){
+                $("#infoAdmin").attr("style","");
+            }else if (role == "admin"  ){
+                $("#admin").attr("style","");
+            }else if (role == "superadmin"){
+                $("#waiter").attr("style","");
+                $("#infoAdmin").attr("style","");
+                $("#admin").attr("style","")
+            }
+        }
+
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            //导航切换
+            $(".menuson li").click(function () {
+                $(".menuson li.active").removeClass("active")
+                $(this).addClass("active");
+            });
+
+            $('.title').click(function () {
+                var $ul = $(this).next('ul');
+                $('dd').find('ul').slideUp();
+                if ($ul.is(':visible')) {
+                    $(this).next('ul').slideUp();
+                } else {
+                    $(this).next('ul').slideDown();
+                }
+            });
+        })
+    </script>
+
+</head>
+
+<body style="background:#f0f9fd;">
+<div class="lefttop"><span></span>功能选项</div>
+<dl class="leftmenu" id="waiter"  style="display: none;">
+    <dd>
+        <div class="title">
+            <span style="height: 16px;margin: 4px 4px 4px 4px;"><img src="/images/leftico01.png"/></span>报修，咨询及投诉
+        </div>
+        <ul class="menuson">
+            <li ><cite></cite><a href="/repair.html" target="rightFrame">客户报修</a><i></i></li>
+            <li><cite></cite><a href="/consult.html" target="rightFrame">客户咨询</a><i></i></li>
+            <li><cite></cite><a href="/complaint.html" target="rightFrame">客户投诉</a><i></i></li>
+            <li><cite></cite><a href="/repairlist.html" target="rightFrame">报修记录</a><i></i></li>
+            <li><cite></cite><a href="/consultlist.html" target="rightFrame">咨询记录</a><i></i></li>
+            <li><cite></cite><a href="/complaintlist.html"  target="rightFrame">投诉记录</a><i></i></li>
+        </ul>
+
+    </dd>
+</dl>
+<dl class="leftmenu" id="infoAdmin" style="display: none;" >
+    <dd>
+        <div class="title">
+            <span style="height: 16px;margin: 4px 4px 4px 4px;"><img src="/images/leftico03.png"/></span>维修记录
+        </div>
+        <ul class="menuson">
+
+            <li><cite></cite><a href="/fixloged.html" target="rightFrame">维修完成记录列表</a><i></i></li>
+            <li><cite></cite><a href="/fixloging.html" target="rightFrame">录入维修记录</a><i></i></li>
+        </ul>
+    </dd>
+</dl>
+<dl class="leftmenu" id="admin"  style="display: none;" >
+    <dd>
+        <div class="title">
+            <span style="height: 16px;margin: 4px 4px 4px 4px;"><img src="/images/leftico02.png"/></span>仓库管理
+        </div>
+        <ul class="menuson">
+            <li><cite></cite><a href="/storage.html" target="rightFrame">仓库内物品信息</a><i></i></li>
+            <li><cite></cite><a href="/workerlist.html" target="rightFrame">物品出库</a><i></i></li>
+            <li><cite></cite><a href="/itemstorage.html" target="rightFrame">物品入库</a><i></i></li>
+        </ul>
+    </dd>
+</dl>
+</body>
+</html>

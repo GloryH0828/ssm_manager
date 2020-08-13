@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript" src="/js/jquery-1.8.2.min.js"></script>
+</head>
+
+
+<div class="place">
+
+    <div class="formbody" >
+        <form id="repair">
+            <div class="formtitle"><span>报修信息</span></div>
+            <ul class="forminfo">
+                <li><label>产品名</label><input name="productname" id="productname" placeholder="请输入产品名称" type="text" class="dfinput" /><i></i></li>
+                <li><label>报修原因</label><input name="reason" id="reason" type="text" class="dfinput" /><i></i></li>
+                <li><label>客户姓名</label><input name="customername" id="customername" type="text" class="dfinput" /><i></i></li>
+                <li><label>联系电话</label><input name="phone" type="text" id="phone" class="dfinput" minlength="0" maxlength="11" /><i></i></li>
+                <li><label>客户地址</label><textarea name="address" id="address" cols="" rows=""  class="textinput"></textarea></li>
+                <li><label>&nbsp;</label><input id="repairSubmit" type="button" class="btn" onclick="verify();" value="提交信息"/></li>
+            </ul>
+        </form>
+    </div>
+</div>
+<script language="JavaScript">
+    //捕获错误，判断错误字段
+    function  getError(errorIndex){
+        switch (errorIndex) {
+            case "productname": return "产品名";break;
+            case "reason": return "原因";break;
+            case "customername": return "客户姓名";break;
+            case "phone": return "客户电话";break;
+            case "address": return "客户地址";break
+        }
+    }
+    //手机号码判断
+    function checkMobile(phone){
+        var regex = /^1\d{10}$/;
+        return regex.test(phone);
+    }
+
+
+    $("#repairSubmit").on("click", function () {
+        var params = $("#repair").serializeArray();
+
+        var j = {};
+        var errorIndex="";
+        for (var item in params) {
+
+            if (params[item].value ==null || params[item].value ==""){
+                errorIndex=params[item].name;
+                alert(getError(errorIndex)+"不得为空！");
+                return  ;
+            }else{
+                j[params[item].name] = params[item].value;
+            }
+
+        }
+        //alert(j["phone"].length);
+
+
+        //验证手机号码格式是否正确
+        if (!checkMobile(j["phone"])){
+            alert("手机号码格式错误！");
+            return;
+        }
+
+       // alert(JSON.stringify(j));
+        $.ajax({
+            url:'/waiter/repair/add',
+            data:JSON.stringify(j),
+            type:'POST',
+            dataType:'json',
+          // 声明参数位json类型，便于后台接收时可以识别
+            headers:{
+                Accept:"application/json",
+                "Content-Type":"application/json"
+            },
+            processData:false,
+            cache:false
+        }).done(function (data) {
+            var status=JSON.parse(data).status;
+            if (status==0){
+                alert("信息添加成功！");
+                $("#productname").val("").focus();
+                $("#reason").val("");
+                $("#customername").val("");
+                $("#phone").val("");
+                $("#address").val("");
+            }else{
+                alert("遇到未知错误，插入失败！");
+            }
+        });
+    });
+</script>
+</html>

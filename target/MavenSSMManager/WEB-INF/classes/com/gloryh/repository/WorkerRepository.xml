@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryh.repository.WorkerRepository">
+    <select id="findFreeWorker" resultType="java.util.Map">
+        SELECT * FROM worker WHERE state = 0
+    </select>
+    <select id="findWorker" resultType="User" parameterType="java.lang.String">
+        SELECT * FROM worker WHERE username = #{workerUsername}
+    </select>
+    <update id="updateWorkerState" parameterType="User">
+        UPDATE worker SET state = #{state} WHERE username =#{username}
+    </update>
+</mapper>

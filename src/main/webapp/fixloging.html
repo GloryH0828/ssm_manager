@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script language="JavaScript" src="/js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".click").click(function(){
+                $(".tip").fadeIn(200);
+            });
+
+            $(".tiptop a").click(function(){
+                $(".tip").fadeOut(200);
+            });
+
+            $(".sure").click(function(){
+                $(".tip").fadeOut(100);
+            });
+
+            $(".cancel").click(function(){
+                $(".tip").fadeOut(100);
+            });
+
+        });
+        $.ajax({
+            url:'/infoadmin/fixlog/fixingLogList',
+            data:JSON.stringify(1),
+            type:'POST',
+            dataType:'json',
+            /*
+           声明参数位json类型，便于后台接收时可以识别
+            */
+            headers:{
+                Accept:"application/json",
+                "Content-Type":"application/json"
+            },
+            processData:false,
+            cache:false
+        }).done(function (data) {
+            getFixingLogList(data);
+            });
+        function getFixingLogList(fixingLogList) {
+            var fixingLogInfo="";
+            for (var i in fixingLogList){
+                fixingLogInfo+=" <tr>\n" +
+                    "                <td><input name=\"id\" type=\"checkbox\" value=\""+fixingLogList[i].id+"\" /></td>\n" +
+                    "                <td>"+fixingLogList[i].productname+"</td>\n" +
+                    "                <td>"+fixingLogList[i].reason+"</td>\n" +
+                    "                <td>"+fixingLogList[i].customername+"</td>\n" +
+                    "                <td>"+fixingLogList[i].customerphone+"</td>\n" +
+                    "                <td>"+fixingLogList[i].customeraddress+"</td>\n" +
+                    "                <td>"+fixingLogList[i].workername+"</td>\n" +
+                    "                <td>"+fixingLogList[i].username+"</td>\n" +
+                    "                <td><a href=\"/updatefixloging.html?fixLogId="+fixingLogList[i].id+"\" class=\"tablelink\">查看</a></td>\n" +
+                    "            </tr>";
+            }
+            $("#fixingLogList").html(fixingLogInfo);
+        }
+    </script>
+
+
+</head>
+
+
+<body>
+<div class="rightinfo">
+
+    <div class="formtitle">
+        <span>报修记录表</span>
+
+    </div>
+
+
+    <table class="tablelist">
+        <thead>
+        <tr>
+            <th><input name="" type="checkbox" value="" checked="checked"/></th>
+            <th>产品名<i class="sort"><img src="images/px.gif" /></i></th>
+            <th>维修原因</th>
+            <th>客户名</th>
+            <th>手机号</th>
+            <th>地址</th>
+            <th>工人名</th>
+            <th>工人工号</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="fixingLogList">
+
+        </tbody>
+    </table>
+
+    <div class="tip">
+        <div class="tiptop"><span>提示信息</span><a></a></div>
+
+        <div class="tipinfo">
+            <span><img src="images/ticon.png" /></span>
+            <div class="tipright">
+                <p>是否确认对信息的修改 ？</p>
+                <cite>如果是请点击确定按钮 ，否则请点取消。</cite>
+            </div>
+        </div>
+
+        <div class="tipbtn">
+            <input name="" type="button"  class="sure" value="确定" />&nbsp;
+            <input name="" type="button"  class="cancel" value="取消" />
+        </div>
+
+    </div>
+
+
+
+
+</div>
+
+<script type="text/javascript">
+    $('.tablelist tbody tr:odd').addClass('odd');
+</script>
+</body>
+</html>

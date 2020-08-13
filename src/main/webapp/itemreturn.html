@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.params.js"></script>
+    <script type="text/javascript" >
+        var fixLogId=$.query.get("fixLogId");
+
+        $.ajax({
+            url:'/admin/stock/findFixLogByID',
+            data:JSON.stringify(fixLogId),
+            type:'POST',
+            dataType:'json',
+            /*
+           声明参数位json类型，便于后台接收时可以识别
+            */
+            headers:{
+                Accept:"application/json",
+                "Content-Type":"application/json"
+            },
+            processData:false,
+            cache:false
+        }).done(function (data) {
+            //alert(data);
+
+            printFixLogInfo(data.fixlog[0]);
+        });
+        function printFixLogInfo(fixlog){
+            var fixLogInfoInHTML="<input name='partsname' type='hidden' value='"+fixlog.partsname+"'>" +
+                "                 <input name='id' type='hidden' value='"+fixLogId+"'>" +
+                "                 <input name='partscount' type='hidden' value='"+fixlog.partscount+"'>" +
+                " <li><label>产品名</label><input name=\"productname\" id=\"productname\" readonly=\"readonly\"\n" +
+                "                                             value='"+fixlog.productname+"' type=\"text\" class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>报修原因</label><input name=\"reason\" type=\"text\" readonly=\"readonly\" value=\""+fixlog.reason+" \"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>客户姓名</label><input name=\"customername\" readonly=\"readonly\" type=\"text\"\n" +
+                "                                              value=\""+fixlog.customername+"\" class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>联系电话</label><input name=\"phone\" readonly=\"readonly\" type=\"number\" value=\""+fixlog.customerphone+"\"\n" +
+                "                                              class=\"dfinput\"/><i></i></li>\n" +
+                "                <li><label>客户地址</label><textarea name=\"address\" readonly=\"readonly\" cols=\"\" rows=\"\"\n" +
+                "                                                 class=\"textinput\">"+fixlog.customeraddress+"</textarea></li>\n" +
+                "                <li><label>使用工具</label>\n" +
+                "                    <input name=\"toolname\"  readonly=\"readonly\"\n" +
+                "                           value=\""+fixlog.toolname+"\" type=\"text\" class=\"dfinput\"/>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>维修配件</label>\n" +
+                "                    <input   readonly=\"readonly\"\n" +
+                "                           value=\""+fixlog.partsname+"-共"+fixlog.partscount+"个\" type=\"text\" class=\"dfinput\"/>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>旧件数量</label>\n" +
+                "                    <input name=\"oldCount\" type=\"number\" max=\""+fixlog.partscount+"\"  min=\"0\" class=\"dfinput\"/>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>剩余新件</label>\n" +
+                "                    <input name=\"newCount\" type=\"number\" max=\""+fixlog.partscount+"\"  min=\"0\" class=\"dfinput\"/>\n" +
+                "                    <i></i></li>\n" +
+                "                <li><label>&nbsp;</label><input type=\"button\" onclick=\"itemReturn();\" class=\"btn\" value=\"归还/入库\"/></li>" ;
+
+            $("#fixLogInfo").prepend(fixLogInfoInHTML);
+        }
+    </script>
+ </head>
+
+
+<div class="place">
+
+    <div class="formbody">
+        <form id="fixLogInfoForm">
+            <div class="formtitle"><span>维修日志信息</span></div>
+            <ul class="forminfo" id="fixLogInfo">
+
+            </ul>
+
+        </form>
+
+    </div>
+</div>
+<script type="text/javascript">
+    function itemReturn() {
+        var params = $("#fixLogInfoForm").serializeArray();
+        var itemInfo = {};
+        for (var item in params) {
+            itemInfo[params[item].name] = params[item].value;
+        }
+        if (itemInfo.oldCount> itemInfo.partscount || itemInfo.oldCount< 0 ||itemInfo.oldCount ==""){
+            alert("旧件数量输入有误，请输入0-"+itemInfo.partscount);
+            return;
+        }
+        if (itemInfo.newCount > itemInfo.partscount || itemInfo.newCount< 0 || itemInfo.newCount == ""){
+            alert("旧件数量输入有误，请输入0-"+itemInfo.partscount);
+            return;
+        }
+       // alert(JSON.stringify(itemInfo));
+        $.ajax({
+            url: '/admin/stock/itemReturn',
+            data: JSON.stringify(itemInfo),
+            type: 'POST',
+            dataType: 'json',
+            /*
+           声明参数位json类型，便于后台接收时可以识别
+            */
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json"
+            },
+            processData: false,
+            cache: false
+        }).done(function (data) {
+                alert("已完成物品归还！");
+                window.location.href="/itemstorage.html"
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress SpringXmlModelInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+">
+
+    <!--整合MyBatis-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="user" value="admin"></property>
+        <property name="password" value="123"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3305/dbmanager?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=UTC&amp;allowMultiQueries=true"></property>
+        <property name="driverClass" value="com.mysql.cj.jdbc.Driver"></property>
+
+        <!--初始化链接个数-->
+        <property name="initialPoolSize" value="5"></property>
+
+        <!--设置最大链接个数-->
+        <property name="maxPoolSize" value="10"></property>
+    </bean>
+    <!-- 配置MyBatis SqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="mapperLocations" value="classpath:com/gloryh/repository/*.xml"></property>
+        <property name="configLocation" value="classpath:config.xml"></property>
+    </bean>
+
+    <!--扫描自定义的Mapper接口-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.gloryh.repository"></property>
+    </bean>
+
+</beans>

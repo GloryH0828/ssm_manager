@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gloryh.repository.RepairRepository">
+    <!--插入成功后返回主键-->
+    <insert id="addRepair" parameterType="Complaint" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO complaint(productname,reason,customername,phone,address,state,type)
+        VALUE
+        (
+        #{productname},
+        #{reason},
+        #{customername},
+        #{phone},
+        #{address},
+        #{state},
+        #{type}
+        )
+    </insert>
+    <select id="repairList" resultType="java.util.Map">
+        SELECT * FROM complaint WHERE type = 0 LIMIT #{param1} , #{param2}
+    </select>
+    <select id="CountForRepair" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM  complaint WHERE type = 0
+    </select>
+    <select id="findRepairById" resultType="Complaint" parameterType="java.lang.Integer">
+        SELECT * FROM complaint WHERE id = #{id}
+    </select>
+    <insert id="creatFixLog" parameterType="Fixlog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO fixlog(
+        workername,
+        username,
+        state,
+        customername,
+        customerphone,
+        customeraddress,
+        productname,
+        borrowtime,
+        reason,
+        toolname,
+        toolcount,
+        partsname,
+        partscount
+        )
+         values
+         (
+         #{workername},
+         #{username},
+         #{state},
+         #{customername},
+         #{customerphone},
+         #{customeraddress},
+         #{productname},
+         #{borrowtime},
+         #{reason},
+         #{toolname},
+         #{toolcount},
+         #{partsname},
+         #{partscount})
+    </insert>
+    <update id="updateRepairState" parameterType="java.lang.Integer">
+        UPDATE complaint SET state = #{param2} WHERE id =#{param1}
+    </update>
+</mapper>

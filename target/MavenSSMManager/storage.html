@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>无标题文档</title>
+    <link href="css/style.css" rel="stylesheet" type="text/css"/>
+    <link href="css/select.css" rel="stylesheet" type="text/css"/>
+
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery.idTabs.min.js"></script>
+    <script type="text/javascript" src="js/select-ui.min.js"></script>
+    <script type="text/javascript" src="editor/kindeditor.js"></script>
+
+    <script type="text/javascript">
+        KE.show({
+            id: 'content7',
+            cssPath: './index.css'
+        });
+        loadData();
+        function loadData() {
+
+            $.ajax({
+                url:'/admin/stock/findAll',
+                data:JSON.stringify(1),
+                type:'POST',
+                dataType:'json',
+                /*
+               声明参数位json类型，便于后台接收时可以识别
+                */
+                headers:{
+                    Accept:"application/json",
+                    "Content-Type":"application/json"
+                },
+                processData:false,
+                cache:false
+            }).done(function (data) {
+                //alert(JSON.stringify(data));
+                $("#parts1").html(reloadList(data.parts1));
+                $("#parts2").html(reloadList(data.parts2));
+                $("#parts3").html(reloadList(data.parts3));
+                $("#tools1").html(reloadList(data.tools1));
+                $("#tools2").html(reloadList(data.tools2));
+                $("#tools3").html(reloadList(data.tools3));
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function (e) {
+            $(".select1").uedSelect({
+                width: 345
+            });
+            $(".select2").uedSelect({
+                width: 167
+            });
+            $(".select3").uedSelect({
+                width: 100
+            });
+        });
+    </script>
+    <script>
+        function reloadList(lists) {
+            var listHTML="<tr>\n" ;
+
+            for(var index in lists){
+                listHTML+=
+                    "            <td><input name=\"\" type=\"checkbox\" value='"+lists[index].id+"'/></td>\n" +
+                    "                <td>"+lists[index].id+"</td>\n" +
+                    "                <td>"+lists[index].name+"</td>\n" +
+                    "                <td>"+lists[index].count+"</td>\n" +
+                    "                </tr>"
+            }
+            return listHTML;
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="place">
+    <span>位置：</span>
+    <ul class="placeul">
+        <li><a href="#">首页</a></li>
+        <li><a href="#">系统设置</a></li>
+    </ul>
+</div>
+
+<div class="formbody">
+
+
+    <div id="usual1" class="usual">
+
+        <div class="itab">
+            <ul>
+                <li><a href="#tab1" class="selected">工具信息列表</a></li>
+                <li><a href="#tab2">工具待补货列表</a></li>
+                <li><a href="#tab3">配件信息列表</a></li>
+                <li><a href="#tab4">配件待补货列表</a></li>
+                <li><a href="#tab5">坏旧配件列表</a></li>
+                <li><a href="#tab6">坏旧工具列表</a></li>
+            </ul>
+        </div>
+
+        <div id="tab1" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>剩余数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="tools1">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="tab2" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="tools2">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="tab3" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="parts1">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="tab4" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="parts2">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="tab5" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="parts3">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+        <div id="tab6" class="tabson">
+
+
+            <table class="tablelist">
+                <thead>
+
+                <tr>
+                    <th><input name="" type="checkbox" value="" checked="checked"/></th>
+                    <th>编号<i class="sort"><img src="images/px.gif"/></i></th>
+                    <th>名称</th>
+                    <th>数量</th>
+                </tr>
+
+                </thead>
+                <tbody id="tools3">
+
+
+                </tbody>
+            </table>
+
+
+        </div>
+
+    </div>
+
+    <script type="text/javascript">
+        $("#usual1 ul").idTabs();
+    </script>
+
+    <script type="text/javascript">
+        $('.tablelist tbody tr:odd').addClass('odd');
+    </script>
+
+
+</div>
+
+</body>
+</html>
