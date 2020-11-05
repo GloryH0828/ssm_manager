@@ -1,5 +1,5 @@
-#纯静态重构家电售后管理系统(Ajax+HTML+SSM)--写的很渣，不要喷我
-##Json的使用
+# 纯静态重构家电售后管理系统(Ajax+HTML+SSM)--写的很渣，不要喷我
+## Json的使用
 ```
 <script type="text/javascript">
     $("#submit").on("click", function () {
@@ -56,7 +56,7 @@
     
      
      
-###前端传递Json参数为单一对象时
+### 前端传递Json参数为单一对象时
 >可以直接将参数转换为Json
 ```
 data:JSON.stringify(thisPage)
@@ -72,7 +72,7 @@ data:JSON.stringify(thisPage)
 >解决办法：修改参数名，不占用name参数
 >>示例：`var name1=$.query.get("name");`
 
-##Gson包可以将固定类型的字符串型函数转化位Json类型
+## Gson包可以将固定类型的字符串型函数转化位Json类型
 >代码示例：
 ```
  String JsonObject;
@@ -85,7 +85,7 @@ data:JSON.stringify(thisPage)
     return gson.toJson(JsonObject) ;
 ```
 >转换结果: `[{"status":0}`
-###当传送的Json由多个类组成时，使用put装载
+### 当传送的Json由多个类组成时，使用put装载
 >代码示例：
 ```
  String JsonObject;
@@ -100,7 +100,7 @@ data:JSON.stringify(thisPage)
 >转换结果: `[{"status":0}`
 
 
-##mapper操作数据库，insert可以将插入数据后的逐渐返回并set进调用的实体类中
+## mapper操作数据库，insert可以将插入数据后的逐渐返回并set进调用的实体类中
 >示例：
 ```
  System.out.println(consult.toString());
@@ -122,7 +122,7 @@ JDBC Connection [com.mchange.v2.c3p0.impl.NewProxyConnection@3d2b4c13 [wrapping:
 Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1b6592b7]
 插入后consult的id值为：5
 ```
-##号码判断正则表达式
+## 号码判断正则表达式
 ```
 /*以1开头的11位纯数字*/
  function checkMobile(phone){
@@ -130,9 +130,9 @@ Closing non transactional SqlSession [org.apache.ibatis.session.defaults.Default
         return regex.test(phone);
  }
 ```
-##Json在传送带实体类的数据时可以直接读取？（尚不理解）
-####已理解，被传送至前段时，已经被转换为Json类，所以可以直接使用。
-###代码示例
+## Json在传送带实体类的数据时可以直接读取？（尚不理解）
+#### 已理解，被传送至前段时，已经被转换为Json类，所以可以直接使用。
+### 代码示例
 >逻辑代码
 ```
  Page page=repairService.repairList(current);
@@ -169,7 +169,7 @@ Closing non transactional SqlSession [org.apache.ibatis.session.defaults.Default
 {"pageSize":10,"currentPage":1,"totalSize":24,"totalPage":0,"startIndex":0,"list":[{"reason":"1","address":"1","phone":"1","productname":"1","id":1,"state":1,"customername":"1","type":0},{"reason":"1","address":"2","phone":"2","productname":"1","id":2,"state":3,"customername":"1","type":0},{"reason":"3","address":"3","phone":"3","productname":"3","id":3,"state":1,"customername":"3","type":0},{"reason":"3","address":"3","phone":"3","productname":"4","id":4,"state":3,"customername":"3","type":0},{"reason":"6","address":"6","phone":"6","productname":"6","id":5,"state":0,"customername":"6","type":0},{"reason":"4","address":"4","phone":"5","productname":"5","id":6,"state":0,"customername":"3","type":0},{"reason":"4","address":"4","phone":"5","productname":"5","id":7,"state":0,"customername":"3","type":0},{"reason":"8","address":"8","phone":"8","productname":"8","id":8,"state":0,"customername":"8","type":0},{"reason":"h","address":"h","phone":"11223","productname":"h","id":9,"state":0,"customername":"h","type":0},{"reason":"ll","address":"ll","phone":"6","productname":"ll","id":10,"state":0,"customername":"ll","type":0}],"num":6,"start":0,"end":0}
 
 ```
-###输出示例
+### 输出示例
 >ajax
 ```
  $.ajax({
@@ -207,7 +207,7 @@ data.list.reason:undefined
 data.list[0].reason:1
 ```
 
-##Json读取List元素参数
+## Json读取List元素参数
 >Json参数
 `"list":[{"name":"3","id":3,"state":0,"username":"3"},{"name":"5","id":5,"state":0,"username":"5"},{"name":"6","id":6,"state":0,"username":"6"}]`
 
@@ -219,7 +219,7 @@ data.list[0].reason:1
       workerList+="<option value='"+workerUsername+"'>"+workerName+"</option>";
 }
 ```
-##String转Json
+## String转Json
 >Gson方法执行类似操作时需要知道转换后的对象类型，操作比较多
 ```
 public static Object JSONToObject(String json,Class beanClass) {
@@ -238,9 +238,9 @@ public static Object JSONToObject(String json,Class beanClass) {
 ```
 >总结，当返回的字符串Json不是单一对象类，还有其他参数时，Gson并不适用，建议用jaskson，
 >对象类型单一时，Gson可以完成类的转换，省去了手动转换，建议使用Gson
-##设置时间格式
+## 设置时间格式
 ```SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");```
-##MyBatis中特殊符号（大于、小于等）的处理
+## MyBatis中特殊符号（大于、小于等）的处理
 第一种写法：
 *  &lt;              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;               小于号（\&lt;） 
 *  &lt;=             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                           小于等于(\&lt;=)
@@ -265,8 +265,8 @@ public static Object JSONToObject(String json,Class beanClass) {
 ```create_date_time >= #{startTime} and  create_date_time <= #{endTime}```
 
 
-##MyBatis一次执行多个SQL语句
-###MySQL中
+## MyBatis一次执行多个SQL语句
+### MySQL中
 >1.在MySQL的链接字符串中添加allowMultiQueries=true字段
 ```
 <property name="user" value="admin"></property>
@@ -282,7 +282,7 @@ public static Object JSONToObject(String json,Class beanClass) {
         UPDATE stock SET count = count-#{partscount}  WHERE name = #{partsname} and type = 1;
 </update>
 ```  
-###Oracle中  
+### Oracle中  
 >直接使用begin end 字段
 ```
 <delete id="delete" parameterType="upc.cbs.HtxxlrEntity">
@@ -293,7 +293,7 @@ begin
  end;
 </delete>
 ```
-##Ajax中append() 和before()、after()用法的区别  
+## Ajax中append() 和before()、after()用法的区别  
 ```
 <p>hello</p>
   
@@ -318,7 +318,7 @@ $("p").before("<b>world</b>")
 <b>world</b><p>hello</p>
 ```
 
-##repository接口调用Mybatis操作数据库时，可以使用注解的方式向Mybatis注入字段
+## repository接口调用Mybatis操作数据库时，可以使用注解的方式向Mybatis注入字段
 * 使用注解前  
    接口端（注入）:   
    `public List<Map<String, Object>> consultList(int startIndex, int pageSize);` 
